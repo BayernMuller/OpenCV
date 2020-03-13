@@ -49,30 +49,34 @@ int fingerCount(const Mat& mask, Point pt, double radius)
 {
 	int cx, cy, finger = 0;
 	radius *= 2;
-	
 	uchar prev = 1;
-	imshow("dd", mask);
 	for (int i = 1; i < 360; i += 3)
 	{
 		double radian = i * ((22 / 7.0) / 180);
 		cx = radius * cos(radian);
 		cy = radius * sin(radian);
-		uchar current = mask.at<uchar>(pt.y - cy, pt.x + cx);
-		if (!prev && current)
-		{
-			finger++;
-			v.push_back({ pt.x + cx, pt.y - cy });
+		if (pt.y - cy < mask.cols && pt.x + cx < mask.rows)
+		{ // In mask's area.
+			uchar current = mask.at<uchar>(pt.y - cy, pt.x + cx);
+			if (!prev && current)
+			{
+				finger++;
+			}
+			prev = current;
 		}
-		prev = current;
 	}
 	return finger - 1;
 }
 
+
 int main()
 {
-	Mat img = imread("C:\\Users\\User\\Desktop\\hand.jpg", IMREAD_COLOR);
+	Mat img = imread("C:\\Users\\User\\Desktop\\hands\\rock.jpg", IMREAD_COLOR);
 	Mat mask = getMask(img);
 	erode(mask, mask, Mat(3, 3, CV_8U, Scalar(1)), Point(-1, -1), 2);
+
+	imshow("ilbe", mask);
+	waitKey();
 
 	double radius;
 	auto pt = getCenter(mask, radius);
