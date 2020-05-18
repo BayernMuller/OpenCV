@@ -69,9 +69,12 @@ int fingerCount(const Mat& mask, Point pt, double radius)
 }
 
 
-int main()
+int main(int argc, char* argv[])
 {
-	Mat img = imread("C:\\Users\\User\\Desktop\\hands\\rock.jpg", IMREAD_COLOR);
+	if (argc != 2)
+		return -1;
+
+	Mat img = imread(argv[1], IMREAD_COLOR);
 	Mat mask = getMask(img);
 	erode(mask, mask, Mat(3, 3, CV_8U, Scalar(1)), Point(-1, -1), 2);
 
