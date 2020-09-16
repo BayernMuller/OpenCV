@@ -1,5 +1,6 @@
-﻿#include <opencv2/opencv.hpp>
-#include <opencv2/imgproc/types_c.h>
+﻿#include <opencv.hpp>
+#include <imgproc/types_c.h>
+#include <vector>
 using namespace std;
 using namespace cv;
 
@@ -7,7 +8,7 @@ using namespace cv;
 // The function that determines whether the given values are a skin?
 bool isSkin(uchar Cr, uchar Cb)
 {
-	return 128 < Cr && Cr < 170 && 73 < Cb && Cb < 158;
+	return 140 < Cr && Cr < 170 && 77 < Cb && Cb < 127;
 }
 
 // It returns hand's center point by distance transforming.
@@ -45,48 +46,81 @@ Mat getMask(const Mat& img)
 	return mask;
 }
 
-int fingerCount(const Mat& mask, Point pt, double radius)
+auto fingerCount(const Mat& mask, Point pt, double radius)
 {
-	int cx, cy, finger = 0;
+	volatile int x, y, finger = 0;
 	radius *= 2;
 	uchar prev = 1;
-	for (int i = 1; i < 360; i += 3)
+	vector<Point> pts;
+	for (int i = 1; i < 360; i += 1)
 	{
 		double radian = i * ((22 / 7.0) / 180);
-		cx = radius * cos(radian);
-		cy = radius * sin(radian);
-		if (pt.y - cy < mask.cols && pt.x + cx < mask.rows)
+		x = pt.x + radius * cos(radian);
+		y = pt.y - radius * sin(radian);
+		
+		if (0 <= y && y < mask.rows && 0 <= x && x < mask.cols)
 		{ // In mask's area.
-			uchar current = mask.at<uchar>(pt.y - cy, pt.x + cx);
+			uchar current = mask.at<uchar>(y, x);
 			if (!prev && current)
 			{
+				pts.push_back({ x, y });
 				finger++;
 			}
 			prev = current;
 		}
+
 	}
-	return finger - 1;
+	return make_pair(pts, finger - 1);
 }
 
 
 int main(int argc, char* argv[])
 {
-	if (argc != 2)
-		return -1;
+	VideoCapture cap;
+	if (!cap.open(0))
+		return 0;
+	while (true)
+	{
+		Mat frame;
+		cap >> frame;
+		if (frame.empty()) break;
+		Mat mask;// = getMask(frame);
+		cvtColor(frame, mask, COLOR_BGR2YCrCb);
+		inRange(mask, Scalar(0, 140, 77), Scalar(255, 170, 127), mask);
+		//erode(mask, mask, Mat(3, 3, CV_8U, Scalar(1)), Point(-1, -1), 2);
 
-	Mat img = imread(argv[1], IMREAD_COLOR);
-	Mat mask = getMask(img);
-	erode(mask, mask, Mat(3, 3, CV_8U, Scalar(1)), Point(-1, -1), 2);
+		double radius;;
+		auto pt = getCenter(mask, radius);
+		circle(frame, pt, radius, { 255,0,0 }, 3);
 
-	imshow("ilbe", mask);
-	waitKey();
+		auto res = fingerCount(mask, pt, radius);
+		for (auto& pt : res.first)
+		{
+			circle(frame, pt, 1, { 0,0,255 }, 2);
+		}
+		imshow("img", frame);
+		
+		switch (res.second)
+		{
+		case 0:
+			cout << "바위" << endl;
+			break;
+		case 2:
+			cout << "가위" << endl;
+			break;
+		case 5:
+			cout << "보" << endl;
+			break;
+		default:
+			cout << "인식 불가" << endl;
+			break;
+		}
 
-	double radius;
-	auto pt = getCenter(mask, radius);
-	circle(img, pt, radius, { 255,0,0 }, 3);
-
-	cout << fingerCount(mask, pt, radius) << endl;
 	
-	imshow("img", img);
-	waitKey();
+		if (waitKey(10) == 27) break;
+	}
+
+	
+	
+
 }
