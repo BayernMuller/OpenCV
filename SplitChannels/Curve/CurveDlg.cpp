@@ -72,8 +72,9 @@ BOOL CCurveDlg::OnInitDialog()
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 	m_Tap.MoveWindow(10, 10, 602, 625);
-	m_Tap.InsertItem(0, L"Made by..");
-	m_Tap.InsertItem(1, L"세점포물선");
+	m_Tap.InsertItem(0, L"Made");
+	m_Tap.InsertItem(1, L"by");
+	m_Tap.InsertItem(2, L"Channnls");
 	m_Tap.SetCurSel(0);
 
 	CRect rect;
@@ -83,10 +84,15 @@ BOOL CCurveDlg::OnInitDialog()
 	m_Page1->MoveWindow(0, 20, 600, 605);
 	m_Page1->ShowWindow(SW_SHOW);
 
-	m_Page2 = new CFunDlg;
-	m_Page2->Create(IDD_DIALOG2, &m_Tap);
+	m_Page2 = new CByDlg;
+	m_Page2->Create(IDD_DIALOG1, &m_Tap);
 	m_Page2->MoveWindow(0, 20, 600, 605);
 	m_Page2->ShowWindow(SW_HIDE);
+
+	m_Page3 = new CFunDlg;
+	m_Page3->Create(IDD_DIALOG2, &m_Tap);
+	m_Page3->MoveWindow(0, 20, 600, 605);
+	m_Page3->ShowWindow(SW_HIDE);
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -143,15 +149,23 @@ HCURSOR CCurveDlg::OnQueryDragIcon()
 
 void CCurveDlg::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	if (!m_Tap.GetCurSel())
+	switch (m_Tap.GetCurSel())
 	{
+	case 0:
 		m_Page1->ShowWindow(SW_SHOW);
 		m_Page2->ShowWindow(SW_HIDE);
-	}
-	else
-	{
+		m_Page3->ShowWindow(SW_HIDE);
+		break;
+	case 1:
 		m_Page1->ShowWindow(SW_HIDE);
 		m_Page2->ShowWindow(SW_SHOW);
+		m_Page3->ShowWindow(SW_HIDE);
+		break;
+	case 2:
+		m_Page1->ShowWindow(SW_HIDE);
+		m_Page2->ShowWindow(SW_HIDE);
+		m_Page3->ShowWindow(SW_SHOW);
+		break;
 	}
 	*pResult = 0;
 }

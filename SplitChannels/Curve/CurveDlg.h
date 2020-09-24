@@ -21,7 +21,8 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 지원입니다.
 	CByDlg* m_Page1;
-	CFunDlg* m_Page2;
+	CByDlg* m_Page2;
+	CFunDlg* m_Page3;
 
 // 구현입니다.
 protected:

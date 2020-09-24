@@ -13,9 +13,8 @@ IMPLEMENT_DYNAMIC(CFunDlg, CDialogEx)
 
 CFunDlg::CFunDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG2, pParent)
-	, mIndex(FALSE), mFlag(true), mCap(0), mThread(nullptr)
+	, mIndex(FALSE), mFlag(true), mCap(0), mThread(nullptr), mShow(false)
 {
-	
 }
 
 CFunDlg::~CFunDlg()
@@ -114,13 +113,13 @@ void CFunDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 
 void CFunDlg::OnBnClickedStart()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	mShow = true;
 }
 
 
 void CFunDlg::OnBnClickedStop()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	mShow = false;
 }
 
 void CFunDlg::OnRadio(UINT id)
@@ -132,6 +131,9 @@ unsigned int CFunDlg::threadFunc(CFunDlg* dlg)
 {
 	while (dlg->mFlag)
 	{
+		if (!dlg->mShow)
+			continue;
+
 		int index = dlg->mIndex;
 		int bright = dlg->mSlider.GetPos();
 		Mat& img = dlg->mImg;

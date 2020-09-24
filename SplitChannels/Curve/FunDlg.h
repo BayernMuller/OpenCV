@@ -29,6 +29,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	bool mFlag;
+	bool mShow;
 	BOOL mIndex;
 	CStatic m_Pic;
 	CSliderCtrl mSlider;
