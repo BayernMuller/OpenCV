@@ -21,19 +21,26 @@ public:
 #endif
 private:
 	int Mat2CImage(Mat* mat, CImage& img);
+	static unsigned int threadFunc(CFunDlg* dlg);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
 
 	DECLARE_MESSAGE_MAP()
 public:
+	bool mFlag;
+	BOOL mIndex;
 	CStatic m_Pic;
+	CSliderCtrl mSlider;
+	
+	Mat mImg;
+	VideoCapture mCap;
+	thread* mThread;
 
 	virtual BOOL OnInitDialog();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
-	BOOL mIndex;
-	CSliderCtrl mSlider;
 	afx_msg void OnBnClickedStart();
 	afx_msg void OnBnClickedStop();
+	
 };

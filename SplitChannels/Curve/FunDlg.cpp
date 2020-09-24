@@ -13,13 +13,20 @@ IMPLEMENT_DYNAMIC(CFunDlg, CDialogEx)
 
 CFunDlg::CFunDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG2, pParent)
-	, mIndex(FALSE)
+	, mIndex(FALSE), mFlag(true), mCap(0), mThread(nullptr)
 {
-
+	
 }
 
 CFunDlg::~CFunDlg()
 {
+	if (mThread)
+	{
+		mFlag = false;
+		mThread->join();
+		delete mThread;
+	}
+	mCap.release();
 }
 
 void CFunDlg::DoDataExchange(CDataExchange* pDX)
@@ -47,7 +54,9 @@ BOOL CFunDlg::OnInitDialog()
 	CDialogEx::OnInitDialog();
 	mSlider.SetRange(-100, 100);
 	mSlider.SetPos(1);
-
+	mCap.set(CAP_PROP_FRAME_WIDTH, 320);
+	mCap.set(CAP_PROP_FRAME_HEIGHT, 240);
+	mThread = new thread(threadFunc, this);
 	return TRUE;
 }
 
@@ -66,8 +75,8 @@ void CFunDlg::DrawMat()
 	CRect rect;
 	m_Pic.GetClientRect(rect);
 	CImage img;
-	//Mat2CImage(&mImg, img);
-	img.Draw(pDC->m_hDC, 0, 0, img.GetWidth(), img.GetHeight());
+	Mat2CImage(&mImg, img);
+	img.StretchBlt(pDC->m_hDC, 0, 0, rect.Width(), rect.Height());
 }
 
 int CFunDlg::Mat2CImage(Mat* mat, CImage& img)
@@ -113,4 +122,16 @@ void CFunDlg::OnBnClickedStart()
 void CFunDlg::OnBnClickedStop()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+unsigned int CFunDlg::threadFunc(CFunDlg* dlg)
+{
+	while (dlg->mFlag)
+	{
+		dlg->mCap.read(dlg->mImg);
+		dlg->DrawMat();
+		this_thread::sleep_for(chrono::milliseconds(200));
+	}
+	return 0;
 }
