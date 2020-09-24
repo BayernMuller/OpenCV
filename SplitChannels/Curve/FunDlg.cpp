@@ -33,7 +33,6 @@ void CFunDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_PIC, m_Pic);
-	DDX_Radio(pDX, IDC_RADIO1, mIndex);
 	DDX_Control(pDX, IDC_SLIDER2, mSlider);
 }
 
@@ -43,6 +42,7 @@ BEGIN_MESSAGE_MAP(CFunDlg, CDialogEx)
 	ON_WM_SHOWWINDOW()
 	ON_BN_CLICKED(IDC_BUTTON1, &CFunDlg::OnBnClickedStart)
 	ON_BN_CLICKED(IDC_BUTTON2, &CFunDlg::OnBnClickedStop)
+	ON_CONTROL_RANGE(BN_CLICKED, IDC_RADIO1, IDC_RADIO4, &CFunDlg::OnRadio)
 END_MESSAGE_MAP()
 
 
@@ -63,7 +63,6 @@ BOOL CFunDlg::OnInitDialog()
 
 void CFunDlg::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	
 	CDialogEx::OnLButtonDown(nFlags, point);
 }
 
@@ -124,14 +123,33 @@ void CFunDlg::OnBnClickedStop()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }
 
+void CFunDlg::OnRadio(UINT id)
+{
+	mIndex = id - IDC_RADIO1;
+}
 
 unsigned int CFunDlg::threadFunc(CFunDlg* dlg)
 {
 	while (dlg->mFlag)
 	{
-		dlg->mCap.read(dlg->mImg);
+		int index = dlg->mIndex;
+		int bright = dlg->mSlider.GetPos();
+		Mat& img = dlg->mImg;
+		dlg->mCap.read(img);
+		if (index)
+		{
+			Mat bgr[3];
+			split(img, bgr);
+			img = bgr[2 - (index - 1)];
+		}
+		img.convertTo(img, -1, 1, bright);
+		CString str;
+		str.Format(L"%d\n", bright);
+		TRACE(str);
 		dlg->DrawMat();
 		this_thread::sleep_for(chrono::milliseconds(200));
+		
 	}
 	return 0;
 }
+

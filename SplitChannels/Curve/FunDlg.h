@@ -22,7 +22,7 @@ public:
 private:
 	int Mat2CImage(Mat* mat, CImage& img);
 	static unsigned int threadFunc(CFunDlg* dlg);
-
+	void OnRadio(UINT id);
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
 
