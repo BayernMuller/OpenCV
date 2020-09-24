@@ -82,11 +82,13 @@ BOOL CCurveDlg::OnInitDialog()
 	m_Page1 = new CByDlg;
 	m_Page1->Create(IDD_DIALOG1, &m_Tap);
 	m_Page1->MoveWindow(0, 20, 600, 605);
+	m_Page1->mText.SetWindowText(L"https://github.com/BayernMuller");
 	m_Page1->ShowWindow(SW_SHOW);
 
 	m_Page2 = new CByDlg;
 	m_Page2->Create(IDD_DIALOG1, &m_Tap);
 	m_Page2->MoveWindow(0, 20, 600, 605);
+	m_Page2->mText.SetWindowText(L"Made by BayernMuller");
 	m_Page2->ShowWindow(SW_HIDE);
 
 	m_Page3 = new CFunDlg;

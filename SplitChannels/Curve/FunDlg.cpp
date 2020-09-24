@@ -149,7 +149,7 @@ unsigned int CFunDlg::threadFunc(CFunDlg* dlg)
 		str.Format(L"%d\n", bright);
 		TRACE(str);
 		dlg->DrawMat();
-		this_thread::sleep_for(chrono::milliseconds(200));
+		this_thread::sleep_for(chrono::milliseconds(50));
 		
 	}
 	return 0;

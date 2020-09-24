@@ -24,6 +24,7 @@ CByDlg::~CByDlg()
 void CByDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_TEXT, mText);
 }
 
 
