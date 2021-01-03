@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 from math import sqrt
 
-ori = cv2.imread("img/sample (4).jpg", cv2.IMREAD_COLOR)
+ori = cv2.imread("img/sample (10).jpg", cv2.IMREAD_COLOR)
 src = cv2.medianBlur(ori, 13) # 블러로 부드럽게 만듦
 #src = cv2.cvtColor(src, cv2.COLOR_BGR2HSV)
 canny = cv2.Canny(src, 100, 255) # 윤곽 검출
@@ -48,7 +48,7 @@ for i in range(len(vertical)):
             continue
         target = vertical[j]
         if abs(abs(line[0] - target[0]) - row) < 10: # 두 선 사이 거리가 row와 비슷해야함 (오차범위 10)
-            if abs(abs(line[1] - target[3]) - col) < 10:
+            if abs(abs(line[1] - target[3]) - col) < 10: # 두 선사이의 거리가 col과 비슷해야함
                 rectangles.append(((line[0], line[1]), (target[2], target[3])))
                 
 # case 2:
@@ -58,7 +58,7 @@ for i in range(len(horizontal)):
         if i == j:
             continue
         target = horizontal[j]
-        if abs(abs(line[1] - target[3]) - col) < 10:
+        if abs(abs(line[1] - target[3]) - col) < 10: # case 1과 같음
             if abs(abs(line[0] - target[2]) - row) < 10:
                 rectangles.append(((line[0], line[1]), (target[2], target[3])))
 
