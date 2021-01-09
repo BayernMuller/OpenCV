@@ -22,8 +22,6 @@ int main(int argc, char* argv[])
 	Mat warpImg(warpSize, a.type());
 	Mat trans = getPerspectiveTransform(corners, warpCorners);
 	warpPerspective(a, warpImg, trans, warpSize);
-	VideoWriter wrt;
-	wrt.open("1.AVI", VideoWriter::fourcc('M', 'J', 'P', 'G'), 29, warpSize);
 
 	for (int i = 0; i <= a.cols; i+=5)
 	{
@@ -48,8 +46,6 @@ int main(int argc, char* argv[])
 			}
 			cnt++;
 		}
-		wrt.write(img);
-
 		imshow("result", img);
 		if (waitKey(20) == 27)
 			return 0;
